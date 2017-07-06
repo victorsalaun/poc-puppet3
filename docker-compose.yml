@@ -1,0 +1,28 @@
+version: '2'
+services:
+  master:
+    image: victorsalaun/puppet-master
+    hostname: master.docker
+    ports:
+      - "8140:8140"
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - ./puppet/modules:/etc/puppet/modules
+      - ./puppet/hieradata:/etc/puppet/hieradata
+      - ./site.pp:/etc/puppet/manifests/site.pp
+      - ./hiera.yaml:/etc/puppet/hiera.yaml
+
+  repo:
+    image: victorsalaun/puppet-agent
+    hostname: repo.docker
+    ports:
+      - "80"
+    links:
+      - master
+    depends_on:
+      - master
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - ./repo:/opt/repo/
